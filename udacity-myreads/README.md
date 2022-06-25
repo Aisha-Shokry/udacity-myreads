@@ -1,6 +1,7 @@
-# Getting Started with Create React App
+# myReads udacity application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ it's a books library application ,library has three shelves(currently reading, read ,want to read), user can update book's shelf.
+application contain main page and search page (user can search about any book by its name) 
 
 ## Available Scripts
 
@@ -68,3 +69,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
