@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -11,22 +11,39 @@ import { search } from "../api/BooksAPI";
 export default function SearchPage(props) {
   const [searchValue, setSearchValue] = useState("");
   const [searchedBooks, setSearchedBooks] = useState([]);
-  const handleChangeValue = (e) => {
-    setSearchValue(e.target.value);
-    getSearchResult(e.target.value);
-  };
   const [searchNoresult, setNoResult] = useState(false);
-  const getSearchResult = (searchQuery) => {
-    searchQuery
-      ? search(searchQuery).then((res) =>
-          res.length > 0
-            ? (setSearchedBooks(res), setNoResult(false))
-            : setSearchedBooks([])
-        )
-      : setSearchedBooks([]);
-    setNoResult(true);
-  };
 
+  useEffect(() => {
+    let searchFlag = true;
+    if (searchValue) {
+      search(searchValue).then((res) => {
+        if (res.error) {
+          setSearchedBooks([]);
+          setNoResult(true);
+        } else {
+          if (searchFlag) {
+            setSearchedBooks(
+              props.allBooks
+                .filter((b) => res.find((x) => b.id === x.id))
+                .concat(
+                  res.filter((book) =>
+                    props.allBooks.every((b) => book.id !== b.id)
+                  )
+                )
+            );
+            setNoResult(false);
+          } else {
+            return null;
+          }
+        }
+      });
+    }
+
+    return () => {
+      searchFlag = false;
+      setSearchedBooks([]);
+    };
+  }, [searchValue, props.allBooks]);
   return (
     <div className="mt-5 pt-5">
       <Link to="/">
@@ -35,7 +52,7 @@ export default function SearchPage(props) {
       <div className="searchInputDiv m-3">
         <Input
           value={searchValue}
-          onChange={handleChangeValue}
+          onChange={(e) => setSearchValue(e.target.value)}
           placeholder="Search by title, author, or ISBN"
         />
       </div>
@@ -50,6 +67,7 @@ export default function SearchPage(props) {
               />
             </Col>
           ))}
+
         {searchNoresult && <p className="noResults">No results</p>}
       </Row>
     </div>
